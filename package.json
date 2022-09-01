@@ -1,0 +1,52 @@
+{
+  "name": "gmap-ol",
+  "version": "0.1.16",
+  "description": "A set of helper classes for working with openLayers.",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "proj4": "^2.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "babel-loader": "^8.2.5",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.7.1",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-define-config": "^1.2.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "ol": "^6.15.1",
+    "prettier": "^2.4.1",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.3",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "peerDependencies": {
+    "ol": "^6.5"
+  },
+  "author": "xuhongling",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ol",
+    "openlayers",
+    "gmap",
+    "gmap-ol",
+    "ol-util",
+    "ol-tool",
+    "olmap"
+  ],
+  "homepage": "http://42.193.225.61:3000",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xuhongling/gmap-ol.git"
+  }
+}

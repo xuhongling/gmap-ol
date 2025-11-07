@@ -7,7 +7,8 @@
 
 .ol-popup, .gmap-popover {
   position: absolute;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   padding: 14px;
   border-radius: 10px;
@@ -60,6 +61,7 @@
   content: "✖";
   color: #00aaff;
   font-size: 16px;
+  pointer-events: auto;
 }
 
 .gmap-popover::before {
@@ -87,6 +89,7 @@
   height: 30px;
   cursor: pointer;
   white-space: nowrap;
+  pointer-events: auto;
 }
 .gmap-pick-list li:hover{
   color: #00aaff;

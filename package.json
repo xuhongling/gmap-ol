@@ -1,6 +1,6 @@
 {
   "name": "gmap-ol",
-  "version": "0.1.16",
+  "version": "0.6.4",
   "description": "A set of helper classes for working with openLayers.",
   "main": "dist/main.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-define-config": "^1.2.3",
     "eslint-plugin-prettier": "^4.0.0",
-    "ol": "^6.15.1",
+    "ol": "^9.1.0",
     "prettier": "^2.4.1",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.3",
@@ -28,7 +28,7 @@
     "webpack-cli": "^4.10.0"
   },
   "peerDependencies": {
-    "ol": "^6.5"
+    "ol": ">=6.5.0"
   },
   "author": "xuhongling",
   "license": "MIT",
@@ -44,7 +44,7 @@
     "ol-tool",
     "olmap"
   ],
-  "homepage": "http://42.193.225.61:3000",
+  "homepage": "http://gmap-ol.netlify.app",
   "repository": {
     "type": "git",
     "url": "git://github.com/xuhongling/gmap-ol.git"

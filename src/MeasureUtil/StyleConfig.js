@@ -1,6 +1,6 @@
-import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style, Text } from 'ol/style';
+import { Circle as CircleStyle, Fill, RegularShape, Stroke, Style, Text, Icon } from 'ol/style';
 
-const style = new Style({
+const defaultStyle = new Style({
   fill: new Fill({
     color: 'rgba(255, 255, 255, 0.5)',
   }),
@@ -108,4 +108,15 @@ const segmentStyle = new Style({
   }),
 });
 
-export { style, labelStyle, tipStyle, modifyStyle, segmentStyle };
+const clearIcon = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAXhJREFUOE+llLFOwzAURe8tn0AjJCQm7IwsqAOwwFJGViT4AhgpE0gUiQ0Y2z+oYIQRFroAQ8XCWIcFBBJN+QT6kEsSOcWtqJol1rPfsZ/tY8LzfSpVLpALABYBrCRD7gE89USeZ6LodjCNg4FuGNZEZMc3QRojWS+227vumBwo1joCMD8K4vS9BMaoDJ42ulo/CLD0T0h/GIHHojHLSRuIw3APImcJpJn8V31QIet0SycrQbt9zi+lyj3yxklqBsasxUodgazmYCLVIIqOO2FYc2EFkXV2tD4gcOJLyMESiG8CAQ4ZK3UFcuNPGW4iALsS7yptosg1Y63fAcx6NzmB2b6hkN/EDwt6BTA3IejNgi4AbE5UGnBpQRUAp5NsNoB9Jl65x98IjNkedfyx1ncAsnvWs8dvV+LxqwFga8gtz13Y1LvMtTE9S+fIfMtJO45vrmeZa24JA975q0v8GvqMpB3Wv2+yRJESyFI/LtISsjUl0pr2PGw/egfNTXarqeEAAAAASUVORK5CYII=`
+const clearStyle = new Style({
+  image: new Icon({
+    src: clearIcon,
+    crossOrigin: 'anonymous',
+    imgSize: [18, 18],
+    offsetOrigin: 'bottom-right',
+    size: [40, 40],
+  }),
+});
+
+export { defaultStyle, labelStyle, tipStyle, modifyStyle, segmentStyle, clearStyle };

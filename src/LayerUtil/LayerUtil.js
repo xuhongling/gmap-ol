@@ -5,128 +5,119 @@ import OlSourceTileWMS from 'ol/source/TileWMS';
 import OlSourceWMTS from 'ol/source/WMTS';
 
 /**
- * 通过layerName获取地图对应的图层
+ * 通过图层名称（layerName属性）获取地图中对应的图层
  *
- * @param {import("ol/Map").default} map The map to use for lookup.
- * @param {string} name The name to get the layer by.
+ * @param {import("ol/Map").default} map - 地图实例
+ * @param {string} name - 要查找的图层名称（对应图层的layerName属性值）
+ * @returns {import("ol/layer/Base").default|undefined} 匹配的图层实例，未找到则返回undefined
  */
 export function getLayerByName(map, name) {
   const layers = getAllLayers(map);
-  return layers.filter((layer) => {
-    return layer.get('layerName') === name;
-  })[0];
+  // 筛选出layerName属性与目标名称完全匹配的第一个图层
+  return layers.find(layer => layer.get('layerName') === name);
 }
 
 /**
- * 按指定的名称在地图查找对应的图层
- * (parameter LAYERS).
+ * 通过WMS图层的参数名（LAYERS参数）查找对应的图层
  *
- * @param {import("ol/Map").default} map The map to use for lookup.
- * @param {string} name The name to get the layer by.
- * @return {import("../types").WMSLayer|undefined} The result layer or undefined if the layer could not
- *                    be found.
+ * @param {import("ol/Map").default} map - 地图实例
+ * @param {string} name - 要匹配的LAYERS参数值
+ * @returns {import("../types").WMSLayer|undefined} 匹配的WMS图层，未找到则返回undefined
  */
 export function getLayerByNameParam(map, name) {
-  let layers = getAllLayers(map);
-  let layerCandidate;
+  const layers = getAllLayers(map);
+  // 遍历图层，查找WMS源中LAYERS参数匹配的图层
+  return layers.find(layer => {
+    if (!(layer instanceof OlLayerLayer)) return false;
 
-  for (let layer of layers) {
-    if (layer instanceof OlLayerLayer) {
-      const source = layer.getSource();
-      if (source instanceof OlSourceImageWMS || source instanceof OlSourceTileWMS) {
-        if (layer.getSource().getParams()['LAYERS'] === name) {
-          layerCandidate = layer;
-          break;
-        }
-      }
-    }
-  }
-  return layerCandidate;
-}
-
-/**
- * 获取所有图层的集合，包括隐藏的。
- *
- * @param {import("ol/Map").default|import("ol/layer/Group").default} collection The collection to get the layers
- *                                           from. This can be an ol.layer.Group
- *                                           or an ol.Map.
- * @param {(layer: import("ol/layer/Base").default) => boolean} [filter] A filter function that receives the layer.
- *                            If it returns true it will be included in the
- *                            returned layers.
- * @return {import("ol/layer/Base").default[]} An array of all Layers.
- */
-export function getAllLayers(collection, filter = () => true) {
-  let layers = collection.getLayers().getArray();
-  return layers.flatMap(function (layer) {
-    /** @type {import("ol/layer/Base").default[]} */
-    let layers = [];
-    if (layer instanceof OlLayerGroup) {
-      layers = getAllLayers(layer, filter);
-    }
-    if (filter(layer)) {
-      layers.push(layer);
-    }
-    return layers;
+    const source = layer.getSource();
+    // 仅处理ImageWMS和TileWMS类型的图层源
+    return (source instanceof OlSourceImageWMS || source instanceof OlSourceTileWMS)
+      && source.getParams().LAYERS === name;
   });
 }
 
 /**
- * Returns the configured URL of the given layer.
+ * 获取所有图层（包括嵌套在LayerGroup中的图层），支持通过过滤器筛选
  *
- * @param {import("../types").WMSOrWMTSLayer} layer The layer to get the URL from.
- * @returns {string} The layer URL.
+ * @param {import("ol/Map").default|import("ol/layer/Group").default} collection - 图层集合（地图实例或图层组）
+ * @param {(layer: import("ol/layer/Base").default) => boolean} [filter] - 图层过滤器函数，返回true则保留该图层
+ * @returns {import("ol/layer/Base").default[]} 所有符合条件的图层数组
  */
-export function getLayerUrl(layer) {
-  const layerSource = layer.getSource();
-  let layerUrl = '';
-
-  if (layerSource instanceof OlSourceTileWMS) {
-    layerUrl = layerSource.getUrls()?.[0] ?? '';
-  } else if (layerSource instanceof OlSourceImageWMS) {
-    layerUrl = layerSource.getUrl() ?? '';
-  } else if (layerSource instanceof OlSourceWMTS) {
-    layerUrl = layerSource.getUrls()?.[0] ?? '';
-  }
-  return layerUrl;
+export function getAllLayers(collection, filter = () => true) {
+  const layers = collection.getLayers().getArray();
+  // 递归扁平化图层结构（处理嵌套的LayerGroup）
+  return layers.flatMap(layer => {
+    const result = [];
+    // 若为图层组，递归获取其子图层
+    if (layer instanceof OlLayerGroup) {
+      result.push(...getAllLayers(layer, filter));
+    }
+    // 应用过滤器，符合条件则添加到结果
+    if (filter(layer)) {
+      result.push(layer);
+    }
+    return result;
+  });
 }
 
 /**
- * 通过layerName，清除地图指定图层要素
+ * 获取指定图层的URL（支持WMS和WMTS类型图层）
  *
- * @param {import("ol/Map").default} map The map to use for lookup.
- * @param {string} name The name to get the layer by.
+ * @param {import("../types").WMSOrWMTSLayer} layer - 目标图层（WMS或WMTS类型）
+ * @returns {string} 图层的URL，获取失败则返回空字符串
+ */
+export function getLayerUrl(layer) {
+  const source = layer.getSource();
+
+  // 根据图层源类型获取URL
+  if (source instanceof OlSourceTileWMS) {
+    return source.getUrls()?.[0] ?? '';
+  } else if (source instanceof OlSourceImageWMS) {
+    return source.getUrl() ?? '';
+  } else if (source instanceof OlSourceWMTS) {
+    return source.getUrls()?.[0] ?? '';
+  }
+
+  return '';
+}
+
+/**
+ * 通过图层名称（layerName）清除并移除地图中匹配的图层
+ *
+ * @param {import("ol/Map").default} map - 地图实例
+ * @param {string} name - 要移除的图层名称（layerName属性包含该值）
  */
 export function removeLayer(map, name) {
   const layers = getAllLayers(map);
-  const localTargetLayer = [];
-  layers.forEach((layer) => {
-    if (layer.getProperties().layerName !== undefined) {
-      const isVectorLayer = layer.getProperties().layerName.includes(name);
-      if (isVectorLayer) {
-        layer.getSource().clear();
-        localTargetLayer.push(layer);
-      }
-    }
+  const targetLayers = layers.filter(layer => {
+    const layerName = layer.get('layerName');
+    // 筛选出layerName包含目标名称的图层
+    return layerName && layerName.includes(name);
   });
-  localTargetLayer.forEach((layer) => {
+
+  // 清除图层要素并从地图中移除
+  targetLayers.forEach(layer => {
+    layer.getSource()?.clear(); // 兼容无source的图层（避免报错）
     map.removeLayer(layer);
   });
 }
 
 /**
- * 通过layerName、状态，设置图层显示隐藏
+ * 通过图层名称（layerName）设置匹配图层的显示/隐藏状态
  *
- * @param {import("ol/Map").default} map The map to use for lookup.
- * @param {string} name The name to get the layer by.
+ * @param {import("ol/Map").default} map - 地图实例
+ * @param {string} name - 目标图层名称（layerName属性包含该值）
+ * @param {boolean} status - 显示状态（true为显示，false为隐藏）
  */
 export function setLayerVisible(map, name, status) {
   const layers = getAllLayers(map);
-  layers.forEach((layer) => {
-    if (layer.getProperties().layerName !== undefined) {
-      const isVectorLayer = layer.getProperties().layerName.includes(name);
-      if (isVectorLayer) {
-        layer.setVisible(status);
-      }
+
+  layers.forEach(layer => {
+    const layerName = layer.get('layerName');
+    // 对layerName包含目标名称的图层设置可见性
+    if (layerName && layerName.includes(name)) {
+      layer.setVisible(status);
     }
   });
 }

@@ -1,40 +1,51 @@
 {
   "name": "gmap-ol",
-  "version": "0.6.4",
-  "description": "A set of helper classes for working with openLayers.",
-  "main": "dist/main.js",
+  "version": "1.0.0",
+  "description": "A set of TypeScript helper functions for working with OpenLayers.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "vite build && npm run check-exports",
+    "prepublishOnly": "npm run typecheck && npm run build",
+    "typecheck": "tsc --noEmit",
+    "check-exports": "node scripts/check-exports.mjs",
+    "lint": "eslint src",
+    "format": "prettier --write src"
   },
   "dependencies": {
     "proj4": "^2.8.0"
   },
-  "devDependencies": {
-    "@babel/core": "^7.18.10",
-    "@babel/preset-env": "^7.18.10",
-    "babel-loader": "^8.2.5",
-    "clean-webpack-plugin": "^4.0.0",
-    "css-loader": "^6.7.1",
-    "eslint": "^8.11.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-define-config": "^1.2.3",
-    "eslint-plugin-prettier": "^4.0.0",
-    "ol": "^9.1.0",
-    "prettier": "^2.4.1",
-    "style-loader": "^3.3.1",
-    "terser-webpack-plugin": "^5.3.3",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
-  },
   "peerDependencies": {
     "ol": ">=6.5.0"
   },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^26.6.3",
+    "@types/proj4": "^2.5.5",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "ol": "^9.2.4",
+    "prettier": "^3.4.2",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.7",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
+    "vite-plugin-dts": "^4.3.0"
+  },
   "author": "xuhongling",
   "license": "MIT",
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "ol",
     "openlayers",
@@ -42,11 +53,7 @@
     "gmap-ol",
     "ol-util",
     "ol-tool",
-    "olmap"
-  ],
-  "homepage": "http://gmap-ol.netlify.app",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/xuhongling/gmap-ol.git"
-  }
+    "olmap",
+    "typescript"
+  ]
 }
